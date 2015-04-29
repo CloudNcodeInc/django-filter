@@ -74,8 +74,8 @@ class Filter(object):
             lookup = self.lookup_type
         if value in ([], (), {}, None, ''):
             return qs
-        method = qs.exclude if self.exclude else qs.filter
-        qs = method(**{'%s__%s' % (self.name, lookup): value})
+        method = qs.exclude if self.exclude ^ (lookup == 'ne') else qs.filter
+        qs = method(**{'%s__%s' % (self.name, 'exact' if lookup == 'ne' else lookup): value})
         if self.distinct:
             qs = qs.distinct()
         return qs
